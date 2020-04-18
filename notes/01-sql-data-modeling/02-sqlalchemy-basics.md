@@ -87,3 +87,45 @@ def populate_users():
     except IntegrityError:
         db.session.rollback()
 ```
+
+## Fetching query results
+
+### Filtering
+
+Filtering can be made using `query.filter` or `query.filter_by`. Provide explicit `Table.column` with the former,
+just `column` with the latter :
+
+```python
+# Filter specifying the model
+first_twos = User.query.filter(User.id < 3).all()
+
+# Filter from within the table
+xmen = User.query.filter_by(code='XMEN').all()
+```
+
+To use a table-independant query, use `db.session.query(Table)` rather than  `Table.query` :
+
+```python
+xmen = db.session.query(User).filter(User.code = 'XMEN').all()
+```
+
+### Like filtering
+
+Postgresql `LIKE` and `ILIKE` operators are available within
+a sqlalchemy column :
+
+```python
+like_logan = User.query.filter(User.name.like("%log%")).first()
+```
+
+### Flushing
+
+Each `db.session` starts a database transaction. All changes made in that
+transaction are not pushed to the database until `db.session.flush()` is called. When changes are flushed, they're available in memory within the
+transaction, but not persisted into the database until `db.session.commit()`
+is called.
+
+Thus, if you fetch results from an external app (`psql` for instance), flushed
+but not commited changed will not appear ! Also, a `db.session.query` always
+flush a transaction so that current changes are available in that query (useful
+for checking updates before commiting them, for instance).
