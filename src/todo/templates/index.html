@@ -1,0 +1,66 @@
+<html>
+
+<head>
+    <title>To-do app</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class='bandeau borders'><span>Welcome to a simple todo list</span></header>
+    <div id="content-body" class='bandeau'>
+        <div id="add-item-form" class='bandeau'>
+            <form action="/todos/create" method='POST' class='item-form centered'>
+                <div class='item-form'>
+                    <label for="text">What should be done</label>
+                    <input type="text" id="todo-text" name="text" required />
+                </div>
+                <div class='item-form'>
+                    <label for="due-date">For which date (optional)</label>
+                    <input type="date" id="todo-date" name="due-date" />
+                </div>
+            </form>
+        </div>
+        <div id="list-background">
+            <div id='error-container' class='bandeau danger'>
+                <div id='error-clear' class='centered'>Something went wrong, sorry.</div>
+            </div>
+            <div id="list-container">
+                {% if not data %}
+                    <div id="empty-list-message">
+                        <span>No items yet ! Add your first.</span>
+                    </div>
+                {% else %}
+                    <div id="todo-list">
+                        {% for list_item in data %} 
+                            {% if list_item.due_date %}
+                                <div class='list-item'>
+                                    <span class="item-text">{{ list_item.text }}</span>
+                                    <span class="item-date">{{ list_item.due_date }}</span>
+                                </div>
+                            {% else %}
+                                <div class='list-item'>
+                                    <span class="item-text">{{ list_item.text }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div id="delete-all" class='danger'>
+            <form action="/todos/clear" method='POST' class='delete-form centered'>
+                <div class='delete-form'>
+                    <span>DANGER ZONE</span>
+                    <input type="submit" class='delete-form' value="Clear all items">
+                </div>
+            </form>
+        </div>
+        <footer class='borders'>
+            <span>Romain DAMIAN (2020)</span>
+        </footer>
+    </div>
+</body>
+<script src="static/js/layout.js"></script>
+<script src='static/js/create.js'></script>
+<script src='static/js/clear.js'></script>
+</html>
